@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Todo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TodoController extends Controller
 {
@@ -15,7 +16,8 @@ class TodoController extends Controller
     public function index()
     {
         $todos = Todo::all();
-        return response()->json($todos);
+        // Log::debug("listing todos", ["log" -> $todos.toArray()]);
+        return $todos;
     }
 
     /**
@@ -23,9 +25,13 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($data)
     {
-        //
+        $newTodo = new Todo();
+        $newTodo->title = $data['title'];
+        $newTodo->description = $data['description'];
+        $newTodo->save();
+        return $newTodo;
     }
 
     /**
