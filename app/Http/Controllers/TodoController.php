@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Log;
 
 class TodoController extends Controller
 {
+    // No need for table name ($table), Laravel automatically supports it through the Controller name and Model. 
+    // No need for primary key ($primaryKey), Laravel will automatically generate it. 
+
     /**
      * Display a listing of the resource.
      *
@@ -23,15 +26,12 @@ class TodoController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param \App\Models\Todo $todo
      * @return \Illuminate\Http\Response
      */
-    public function create($data)
+    public function create($todo)
     {
-        $newTodo = new Todo();
-        $newTodo->title = $data['title'];
-        $newTodo->description = $data['description'];
-        $newTodo->save();
-        return $newTodo;
+      //
     }
 
     /**
@@ -42,18 +42,24 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Log::debug("creating new resource", ["log" -> $request->toArray()]);
+        $newTodo = new Todo();
+        $newTodo->title = $data['title'];
+        $newTodo->description = $data['description'];
+        $newTodo->save();
+        return $newTodo;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Todo  $todo
+     * @param \App\Models\Todo $todoId 
      * @return \Illuminate\Http\Response
      */
-    public function show(Todo $todo)
+    public function show(string $todoId)
     {
-        //
+        $todo = Todo::find($todoId);
+        return $todo;
     }
 
     /**
@@ -76,7 +82,12 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $todo)
     {
-        //
+        // This should probably spread fillable data.
+        $todo = Todo::find($todo->id);
+        $todo->title = $request->title;
+        $todo->description = $request->description;
+        $todo->status = $request->status;
+        $todo->save();
     }
 
     /**
@@ -87,6 +98,8 @@ class TodoController extends Controller
      */
     public function destroy(Todo $todo)
     {
-        //
+        $todo = Todo::find($todo->id);
+        $todo->delete();
+        // Can also call Todo::destroy($todo->id); or Todo::destroy($todoId);
     }
 }
