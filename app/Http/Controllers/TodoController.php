@@ -42,10 +42,11 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        Log::debug("creating new resource", ["log" -> $request->toArray()]);
+        // Could add validation for the data. Ex.- $request->has('title')
+        // Log::debug("creating new resource", ["log" -> $request->toArray()]);
         $newTodo = new Todo();
-        $newTodo->title = $data['title'];
-        $newTodo->description = $data['description'];
+        $newTodo->title = $request->input('title');
+        $newTodo->description = $request->input('description');
         $newTodo->save();
         return $newTodo;
     }
@@ -86,7 +87,7 @@ class TodoController extends Controller
         $todo = Todo::find($todo->id);
         $todo->title = $request->title;
         $todo->description = $request->description;
-        $todo->status = $request->status;
+        $todo->completed = $request->completed;
         $todo->save();
     }
 
